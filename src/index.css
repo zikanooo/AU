@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+/* Warna dinamis: diisi oleh <DynamicTheme /> dari cover lagu yang sedang diputar */
+:root {
+  --hue: 345;
+  --accent: hsl(var(--hue) 62% 80%);
+  --accent-ink: hsl(var(--hue) 45% 15%);
+  --tint: hsl(var(--hue) 30% 13%);
+  --tint-glow: hsl(var(--hue) 55% 45% / 0.38);
+  --glass-blur: 28px;
+  --glass-bg: rgba(52, 46, 49, 0.52);
+  --glass-line: rgba(255, 255, 255, 0.16);
+}
+
+@theme inline {
+  --font-sans: 'Outfit', 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent);
+  --color-ink: var(--accent-ink);
+  --color-muted: #b4aaae;
+}
+
+@layer base {
+  :root { color-scheme: dark; }
+  body {
+    font-family: var(--font-sans);
+    background-color: #0d0b0c;
+    color: #f4eceb;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  img { -webkit-user-drag: none; }
+}
+
+/* ---------- Permukaan kaca (Liquid Glass) ---------- */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.glass-pill {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 18px 38px -14px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+.glass-bubble {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.no-blur .glass-panel, .no-blur .glass-pill, .no-blur .glass-bubble {
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  background: rgba(38, 34, 36, 0.96);
+}
+.specular-border { position: relative; }
+.specular-border::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 14%; right: 14%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  pointer-events: none;
+}
+
+/* ---------- Chip ---------- */
+.chip {
+  padding: 0.45rem 1.05rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #e9dfde;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.2s ease;
+}
+.chip:active { transform: scale(0.96); }
+.chip-active {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Kartu pengaturan ---------- */
+.set-group-label { font-size: 12.5px; font-weight: 600; font-style: italic; color: var(--accent); margin: 18px 4px 8px; }
+.set-card { border-radius: 22px; overflow: hidden; }
+.set-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; width: 100%; text-align: left; }
+.set-row + .set-row { border-top: 1px solid rgba(255,255,255,0.08); }
+.set-row:active { background: rgba(255,255,255,0.06); }
+.switch { position: relative; width: 50px; height: 30px; border-radius: 999px; background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); transition: all .2s ease; flex-shrink: 0; }
+.switch::after { content:''; position:absolute; top:50%; left:5px; width:16px; height:16px; border-radius:50%; background:#cfc5c7; transform:translateY(-50%); transition: all .2s cubic-bezier(.3,1.4,.5,1); }
+.switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.switch[aria-checked="true"]::after { left: 25px; width: 22px; height: 22px; background: var(--accent-ink); }
+
+.row-divider { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+
+/* GPU optimized ambient mesh keyframes */
+@keyframes blob-float-1 {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(35px, -45px, 0) scale(1.1);
+  }
+  66% {
+    transform: translate3d(-25px, 25px, 0) scale(0.92);
+  }
+}
+
+@keyframes blob-float-2 {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-40px, 35px, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(25px, -30px, 0) scale(0.96);
+  }
+}
+
+@keyframes blob-float-3 {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(35px, 30px, 0) scale(1.14);
+  }
+}
+
+.animate-blob-1 {
+  animation: blob-float-1 22s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: transform;
+}
+.animate-blob-2 {
+  animation: blob-float-2 26s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: transform;
+}
+.animate-blob-3 {
+  animation: blob-float-3 18s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: transform;
+}
+
+/* No scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+/* ---------- Floating album art ---------- */
+@keyframes float-art {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg); }
+  25% { transform: translate3d(0, -10px, 0) rotateX(2deg) rotateY(-2deg); }
+  50% { transform: translate3d(0, -16px, 0) rotateX(0deg) rotateY(2deg); }
+  75% { transform: translate3d(0, -8px, 0) rotateX(-2deg) rotateY(0deg); }
+}
+@keyframes float-shadow {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.55; }
+  50% { transform: translateX(-50%) scale(0.82); opacity: 0.3; }
+}
+.float-art { animation: float-art 6s ease-in-out infinite; will-change: transform; transform-style: preserve-3d; }
+.float-art.paused { animation-play-state: paused; }
+.float-shadow { animation: float-shadow 6s ease-in-out infinite; will-change: transform, opacity; }
+.float-shadow.paused { animation-play-state: paused; }
+
+@keyframes mini-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.mini-float { animation: mini-float 4.5s ease-in-out infinite; }
+
+/* ---------- Spotify-style lyrics ---------- */
+.lyric-line {
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.5s ease, filter 0.5s ease, color 0.4s ease;
+  will-change: transform, opacity, filter;
+}
+.lyric-fill {
+  background-image: linear-gradient(90deg, #fff var(--fill, 0%), rgba(255,255,255,0.38) var(--fill, 0%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.lyrics-mask {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 82%, transparent 100%);
+}
+
+/* Seek slider */
+input[type=range].seek { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px; outline: none; transition: height .2s ease; }
+input[type=range].seek:hover, input[type=range].seek:active { height: 9px; }
+input[type=range].seek::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
+input[type=range].seek:hover::-webkit-slider-thumb, input[type=range].seek:active::-webkit-slider-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .float-art, .float-shadow, .mini-float, .animate-blob-1, .animate-blob-2, .animate-blob-3 { animation: none !important; }
+}
+
+.reduce-anim .float-art, .reduce-anim .float-shadow, .reduce-anim .mini-float,
+.reduce-anim .animate-blob-1, .reduce-anim .animate-blob-2, .reduce-anim .animate-blob-3 { animation: none !important; }
